@@ -16,7 +16,7 @@ namespace CORE.API.Core.Validator
 
             RuleFor(d => d.Code)
               .NotEmpty().WithMessage("Code is required")
-              .Length(2, 25).WithMessage("Code length must be between 2 to 25 character");
+              .Length(3, 8).WithMessage("Code length must be between 2 to 8 character");
 
             RuleFor(d => d.Name)
               .NotEmpty().WithMessage("Name is required")

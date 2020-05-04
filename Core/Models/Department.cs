@@ -12,7 +12,7 @@ namespace CORE.API.Core.Models
         public int Id { get; set; }
 
         [Required]
-        [Column(TypeName = "varchar(50)")]
+        [Column(TypeName = "varchar(8)")]
         public string Code { get; set; }
 
         [Required]
