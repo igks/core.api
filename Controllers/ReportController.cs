@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using AutoMapper;
 using CORE.API.Controllers.Dto;
 using CORE.API.Core.IRepository;
-using Exp.API.Controllers.Resources;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

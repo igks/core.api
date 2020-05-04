@@ -131,7 +131,7 @@ namespace CORE.API
             // specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "BusMeal API end point v1");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "CORE API end point v1");
                 c.RoutePrefix = "docs";
             });
 
