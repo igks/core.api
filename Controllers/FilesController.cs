@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -19,8 +21,28 @@ namespace CORE.API.Controllers
             this.hostingEnvironment = environment;
         }
 
-        [HttpPost]
-        [Route("upload")]
+        [HttpPost("create")]
+        public IActionResult Create()
+        {
+            var fileCreated = DateTime.Now.ToString(@"dd-MM-yyyy, HH-mm-ss");
+            var fileName = "backup file " + fileCreated + ".txt";
+            var uploads = Path.Combine(hostingEnvironment.WebRootPath, "Uploads");
+            if (!Directory.Exists(uploads))
+            {
+                Directory.CreateDirectory(uploads);
+            }
+            var filePath = Path.Combine(uploads, fileName);
+            using (FileStream newFile = System.IO.File.Create(filePath))
+            {
+                byte[] fileContent = new UTF8Encoding(true).GetBytes("This is the backup file created by system");
+                newFile.Write(fileContent, 0, fileContent.Length);
+            }
+
+
+            return Ok();
+        }
+
+        [HttpPost("upload")]
         public async Task<IActionResult> Upload(IFormFile file)
         {
             var uploads = Path.Combine(hostingEnvironment.WebRootPath, "Uploads");
@@ -39,8 +61,7 @@ namespace CORE.API.Controllers
             return Ok();
         }
 
-        [HttpGet]
-        [Route("download")]
+        [HttpGet("download")]
         public async Task<IActionResult> Download([FromQuery] string file)
         {
             var uploads = Path.Combine(hostingEnvironment.WebRootPath, "Uploads");
@@ -58,8 +79,7 @@ namespace CORE.API.Controllers
             return File(memory, GetContentType(filePath), file);
         }
 
-        [HttpGet]
-        [Route("file-list")]
+        [HttpGet("file-list")]
         public IActionResult Files()
         {
             var result = new List<string>();
@@ -75,6 +95,19 @@ namespace CORE.API.Controllers
                 }
             }
             return Ok(result);
+        }
+
+        [HttpDelete("delete")]
+        public IActionResult Remove([FromQuery] string file)
+        {
+            var uploads = Path.Combine(hostingEnvironment.WebRootPath, "Uploads");
+            var filePath = Path.Combine(uploads, file);
+            if (!System.IO.File.Exists(filePath))
+                return NotFound();
+
+            System.IO.File.Delete(filePath);
+
+            return Ok();
         }
 
         private string GetContentType(string path)
