@@ -19,14 +19,14 @@ namespace CORE.API.Controllers
     public class DepartmentController : Controller
     {
         private readonly IMapper mapper;
-        private readonly DataContext context;
+        private readonly IUnitOfWork unitOfWork;
         private readonly IDepartmentRepository departmentRepository;
 
-        public DepartmentController(IMapper mapper, IDepartmentRepository departmenRepository, DataContext context)
+        public DepartmentController(IMapper mapper, IDepartmentRepository departmenRepository, IUnitOfWork unitOfWork)
         {
             this.departmentRepository = departmenRepository;
             this.mapper = mapper;
-            this.context = context;
+            this.unitOfWork = unitOfWork;
         }
 
         [HttpGet]
@@ -77,7 +77,10 @@ namespace CORE.API.Controllers
             var department = mapper.Map<SaveDepartmentDto, Department>(departmentDto);
 
             departmentRepository.Add(department);
-            await context.SaveChangesAsync();
+            if (await unitOfWork.CompleteAsync() == false)
+            {
+                throw new Exception(message: $"Create new department failed on save");
+            }
 
             department = await departmentRepository.GetById(department.Id);
             var result = mapper.Map<Department, ViewDepartmentDto>(department);
@@ -102,7 +105,10 @@ namespace CORE.API.Controllers
 
             departmentRepository.Update(department);
 
-            await context.SaveChangesAsync();
+            if (await unitOfWork.CompleteAsync() == false)
+            {
+                throw new Exception(message: $"Update department failed on save");
+            }
 
             department = await departmentRepository.GetById(department.Id);
             var result = mapper.Map<Department, ViewDepartmentDto>(department);
@@ -121,7 +127,10 @@ namespace CORE.API.Controllers
 
             departmentRepository.Remove(department);
 
-            await context.SaveChangesAsync();
+            if (await unitOfWork.CompleteAsync() == false)
+            {
+                throw new Exception(message: $"Delete department failed on save");
+            }
 
             return Ok(id);
         }
