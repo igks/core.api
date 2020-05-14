@@ -12,6 +12,9 @@ namespace CORE.API.Helpers.Mapping
         {
             CreateMap<Department, ViewDepartmentDto>();
             CreateMap<SaveDepartmentDto, Department>();
+
+            CreateMap<FileList, ViewFileListDto>();
+            CreateMap<SaveFileListDto, FileList>();
         }
     }
 }

@@ -3,6 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
+using CORE.API.Controllers.Dto;
+using CORE.API.Core.IRepository;
+using CORE.API.Core.Models;
+using CORE.API.Helpers;
+using CORE.API.Helpers.Params;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -15,10 +21,14 @@ namespace CORE.API.Controllers
     public class FilesController : Controller
     {
         private readonly IHostingEnvironment hostingEnvironment;
+        private readonly IFileListRepository filesRepository;
+        private readonly IMapper mapper;
 
-        public FilesController(IHostingEnvironment environment)
+        public FilesController(IHostingEnvironment environment, IFileListRepository filesRepository, IMapper mapper)
         {
             this.hostingEnvironment = environment;
+            this.filesRepository = filesRepository;
+            this.mapper = mapper;
         }
 
         [HttpPost("create")]
@@ -38,6 +48,12 @@ namespace CORE.API.Controllers
                 newFile.Write(fileContent, 0, fileContent.Length);
             }
 
+            var fileDb = new FileList()
+            {
+                Name = fileName
+            };
+
+            filesRepository.Add(fileDb);
 
             return Ok();
         }
@@ -45,6 +61,7 @@ namespace CORE.API.Controllers
         [HttpPost("upload")]
         public async Task<IActionResult> Upload(IFormFile file)
         {
+
             var uploads = Path.Combine(hostingEnvironment.WebRootPath, "Uploads");
             if (!Directory.Exists(uploads))
             {
@@ -58,6 +75,14 @@ namespace CORE.API.Controllers
                     await file.CopyToAsync(fileStream);
                 }
             }
+
+            var fileDb = new FileList()
+            {
+                Name = file.FileName
+            };
+
+            filesRepository.Add(fileDb);
+
             return Ok();
         }
 
@@ -79,21 +104,36 @@ namespace CORE.API.Controllers
             return File(memory, GetContentType(filePath), file);
         }
 
-        [HttpGet("file-list")]
-        public IActionResult Files()
-        {
-            var result = new List<string>();
+        // [HttpGet("file-list")]
+        // public IActionResult Files()
+        // {
+        //     var result = new List<string>();
 
-            var uploads = Path.Combine(hostingEnvironment.WebRootPath, "Uploads");
-            if (Directory.Exists(uploads))
-            {
-                var provider = hostingEnvironment.ContentRootFileProvider;
-                foreach (string fileName in Directory.GetFiles(uploads))
-                {
-                    var fileInfo = provider.GetFileInfo(fileName);
-                    result.Add(fileInfo.Name);
-                }
-            }
+        //     var uploads = Path.Combine(hostingEnvironment.WebRootPath, "Uploads");
+        //     if (Directory.Exists(uploads))
+        //     {
+        //         var provider = hostingEnvironment.ContentRootFileProvider;
+        //         foreach (string fileName in Directory.GetFiles(uploads))
+        //         {
+        //             var fileInfo = provider.GetFileInfo(fileName);
+        //             result.Add(fileInfo.Name);
+        //         }
+        //     }
+
+
+        //     return Ok(result);
+        // }
+
+        [HttpGet("file-list")]
+        public async Task<IActionResult> GetPaged([FromQuery] FileListParams fileListParams)
+        {
+
+            var files = await filesRepository.GetPaged(fileListParams);
+
+            var result = mapper.Map<IEnumerable<ViewFileListDto>>(files);
+
+            Response.AddPagination(files.CurrentPage, files.PageSize
+                                  , files.TotalCount, files.TotalPages);
             return Ok(result);
         }
 
@@ -106,6 +146,8 @@ namespace CORE.API.Controllers
                 return NotFound();
 
             System.IO.File.Delete(filePath);
+
+            filesRepository.Remove(file);
 
             return Ok();
         }

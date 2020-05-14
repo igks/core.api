@@ -67,6 +67,8 @@ namespace CORE.API
 
             // repository import and mapping
             services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+            services.AddScoped<IFileListRepository, FileListRepository>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             services.AddAutoMapper(typeof(Startup));
             services.AddCors();
