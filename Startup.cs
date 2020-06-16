@@ -14,8 +14,10 @@ using CORE.API.Persistence.Repository;
 using AutoMapper;
 using CORE.API.Core.Validator;
 using FluentValidation.AspNetCore;
-using FluentValidation;
-using CORE.API.Core.Models;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.Text;
+using Microsoft.OpenApi.Models;
 
 namespace CORE.API
 {
@@ -37,62 +39,35 @@ namespace CORE.API
 
             services.AddAutoMapper(typeof(Startup));
 
-            services.AddMvc().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<DepartmentValidation>());
+            services.AddMvc()
+            .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<DepartmentValidation>());
 
             services.AddScoped<IDepartmentRepository, DepartmentRepository>();
             services.AddScoped<IFileListRepository, FileListRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII
+                              .GetBytes(Configuration.GetSection("AppSettings:Token").Value)),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+                };
+            });
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "CORE API", Version = "v1" });
+
+            });
+
             services.AddControllers();
         }
 
-
-        // services.AddMvc()
-        // disable reference looping
-        // .AddJsonOptions(opt =>
-        // {
-        //     opt.SerializerSettings.ReferenceLoopHandling =
-        //     Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-        // })
-
-
-
-
-
-        // net core compatibility setting
-        // .SetCompatibilityVersion(CompatibilityVersion.Version_3_1);
-
-
-
-        // // repository import and mapping
-        // 
-
-        // 
-        // 
-
-        // add jwt authentication
-        // services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-        //     .AddJwtBearer(options =>
-        //     {
-        //         options.TokenValidationParameters = new TokenValidationParameters
-        //         {
-        //             ValidateIssuerSigningKey = true,
-        //             IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII
-        //                       .GetBytes(Configuration.GetSection("AppSettings:Token").Value)),
-        //             ValidateIssuer = false,
-        //             ValidateAudience = false
-        //         };
-        //     });
-
-        // register the Swagger generator, defining 1 or more Swagger documents
-        // services.AddSwaggerGen(c =>
-        // {
-        //     c.SwaggerDoc("v1", new OpenApiInfo { Title = "CORE API", Version = "v1" });
-
-        // });
-
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
@@ -106,93 +81,21 @@ namespace CORE.API
             app.UseRouting();
 
             app.UseAuthorization();
+            app.UseAuthentication();
 
             app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "CORE API end point v1");
+                c.RoutePrefix = "docs";
+            });
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        // public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        // {
-        //     if (env.EnvironmentName == "Development")
-        //     {
-        //         app.UseDeveloperExceptionPage();
-        //     }
-        //     else
-        //     {
-        //         // app.UseExceptionHandler("/Home/Error");
-        //         // app.UseHsts();
-
-        //         app.UseExceptionHandler(builder =>
-        //         {
-        //             builder.Run(async context =>
-        //                 {
-        //                     context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-
-        //                     var error = context.Features.Get<IExceptionHandlerFeature>();
-        //                     if (error != null)
-        //                     {
-        //                         context.Response.AddApplicationError(error.Error.Message);
-        //                         await context.Response.WriteAsync(error.Error.Message);
-        //                     }
-        //                 });
-        //         });
-        //     }
-
-        //     app.UseRouting();
-
-
-        //     // add database error notification
-        //     // app.UseDatabaseErrorPage();
-
-        //     // enable middleware to serve generated Swagger as a JSON endpoint.
-        //     // app.UseSwagger();
-
-        //     // enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
-        //     // specifying the Swagger JSON endpoint.
-        //     // app.UseSwaggerUI(c =>
-        //     // {
-        //     //     c.SwaggerEndpoint("/swagger/v1/swagger.json", "CORE API end point v1");
-        //     //     c.RoutePrefix = "docs";
-        //     // });
-
-        //     // app.UseHttpsRedirection();
-        //     app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
-
-        //     // use JWT authentication
-        //     // app.UseAuthentication();
-
-        //     app.UseEndpoints(endpoints =>
-        //     {
-        //         endpoints.MapRazorPages();
-        //         endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
-        //     });
-        // }
     }
 }
