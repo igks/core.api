@@ -10,9 +10,9 @@ namespace CORE.API.Persistence.Repository
 {
     public class FileListRepository : IFileListRepository
     {
-        private readonly DataContext context;
+        private readonly AppDbContext context;
 
-        public FileListRepository(DataContext context)
+        public FileListRepository(AppDbContext context)
         {
             this.context = context;
         }
@@ -25,7 +25,7 @@ namespace CORE.API.Persistence.Repository
             if (!string.IsNullOrEmpty(fileListParams.Name))
             {
                 files = files.Where(fl =>
-                  fl.Name.Contains(fileListParams.Name, StringComparison.OrdinalIgnoreCase));
+                  fl.Name.Contains(fileListParams.Name));
             }
 
             return await PagedList<FileList>

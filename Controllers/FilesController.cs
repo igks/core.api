@@ -20,11 +20,11 @@ namespace CORE.API.Controllers
     [RequestSizeLimit(100_000_000)]
     public class FilesController : Controller
     {
-        private readonly IHostingEnvironment hostingEnvironment;
+        private readonly IWebHostEnvironment hostingEnvironment;
         private readonly IFileListRepository filesRepository;
         private readonly IMapper mapper;
 
-        public FilesController(IHostingEnvironment environment, IFileListRepository filesRepository, IMapper mapper)
+        public FilesController(IWebHostEnvironment environment, IFileListRepository filesRepository, IMapper mapper)
         {
             this.hostingEnvironment = environment;
             this.filesRepository = filesRepository;

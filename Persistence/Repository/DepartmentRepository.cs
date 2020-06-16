@@ -13,9 +13,9 @@ namespace CORE.API.Persistence.Repository
 {
     public class DepartmentRepository : IDepartmentRepository
     {
-        private readonly DataContext context;
+        private readonly AppDbContext context;
 
-        public DepartmentRepository(DataContext context)
+        public DepartmentRepository(AppDbContext context)
         {
             this.context = context;
         }
@@ -37,14 +37,12 @@ namespace CORE.API.Persistence.Repository
             // filtering
             if (!string.IsNullOrEmpty(departmentParams.Name))
             {
-                departments = departments.Where(d =>
-                  d.Name.Contains(departmentParams.Name, StringComparison.OrdinalIgnoreCase));
+                departments = departments.Where(d => d.Name.Contains(departmentParams.Name));
             }
 
             if (!string.IsNullOrEmpty(departmentParams.Code))
             {
-                departments = departments.Where(d =>
-                  d.Code.Contains(departmentParams.Code, StringComparison.OrdinalIgnoreCase));
+                departments = departments.Where(d => d.Code.Contains(departmentParams.Code));
             }
 
             // sorting

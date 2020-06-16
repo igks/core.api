@@ -7,9 +7,9 @@ namespace CORE.API.Core.Validator
 {
     public class FileListValidation : AbstractValidator<SaveFileListDto>
     {
-        private readonly DataContext context;
+        private readonly AppDbContext context;
 
-        public FileListValidation(DataContext context)
+        public FileListValidation(AppDbContext context)
         {
             this.context = context;
 

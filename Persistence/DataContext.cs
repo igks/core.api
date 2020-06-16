@@ -5,9 +5,9 @@ using CORE.API.Persistence.Configuration;
 
 namespace CORE.API.Persistence
 {
-    public class DataContext : DbContext
+    public class AppDbContext : DbContext
     {
-        public DataContext(DbContextOptions<DataContext> options) : base(options) { }
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
         public DbSet<Department> Department { get; set; }
         public DbSet<FileList> FileList { get; set; }

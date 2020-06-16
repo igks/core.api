@@ -8,9 +8,9 @@ namespace CORE.API.Core.Validator
 {
     public class DepartmentValidation : AbstractValidator<SaveDepartmentDto>
     {
-        private readonly DataContext context;
+        private readonly AppDbContext context;
 
-        public DepartmentValidation(DataContext context)
+        public DepartmentValidation(AppDbContext context)
         {
             this.context = context;
 

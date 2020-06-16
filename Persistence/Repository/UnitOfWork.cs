@@ -5,9 +5,9 @@ namespace CORE.API.Persistence.Repository
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private DataContext context;
+        private AppDbContext context;
 
-        public UnitOfWork(DataContext context)
+        public UnitOfWork(AppDbContext context)
         {
             this.context = context;
         }
