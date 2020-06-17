@@ -15,6 +15,11 @@ namespace CORE.API.Helpers.Mapping
 
             CreateMap<FileList, ViewFileListDto>();
             CreateMap<SaveFileListDto, FileList>();
+
+            CreateMap<User, ViewUserDto>();
+            CreateMap<AddUserDto, User>();
+            CreateMap<EditUserDto, User>();
+            CreateMap<RegisterDto, User>();
         }
     }
 }

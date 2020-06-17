@@ -16,9 +16,10 @@ using Microsoft.AspNetCore.StaticFiles;
 
 namespace CORE.API.Controllers
 {
+    [ApiController]
     [Route("api/[controller]")]
     [RequestSizeLimit(100_000_000)]
-    public class FilesController : Controller
+    public class FilesController : ControllerBase
     {
         private readonly IWebHostEnvironment hostingEnvironment;
         private readonly IFileListRepository filesRepository;

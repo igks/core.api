@@ -11,11 +11,12 @@ namespace CORE.API.Persistence
 
         public DbSet<Department> Department { get; set; }
         public DbSet<FileList> FileList { get; set; }
+        public DbSet<User> User { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new DepartmentConfiguration());
+            modelBuilder.ApplyConfiguration(new UserConfiguration());
         }
-
     }
 }
