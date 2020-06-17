@@ -40,8 +40,9 @@ namespace CORE.API
             services.AddAutoMapper(typeof(Startup));
 
             services.AddMvc()
-            .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<DepartmentValidation>());
+            .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<UserValidation>());
 
+            services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IDepartmentRepository, DepartmentRepository>();
             services.AddScoped<IFileListRepository, FileListRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
