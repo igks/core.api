@@ -1,0 +1,14 @@
+=========== API Work Flow ===========
+* Buat model/entity class
+* Buat configuration/ fluent API
+* Buat DbSet data context dan register configuration
+* Jalankan Migration dan Update database
+* Buat Dto
+* Buat Automapper Dto
+* Buat Configuration Fluent Validation
+* Buat Params untuk repository (pagination)
+* Buat Interface Repository
+* Buat Repository
+* Register Repository di startup
+* Buat controller
+* Test run
