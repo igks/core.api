@@ -44,10 +44,8 @@ namespace CORE.API.Controllers
             }
 
             var userId = user.Id.ToString();
-            var userName = user.Fisrtname == null ? "New User" : user.Fisrtname;
 
             var claims = new List<Claim>();
-            claims.Add(new Claim("userName", userName));
             claims.Add(new Claim("Id", userId));
 
             var key = new SymmetricSecurityKey(Encoding.UTF8

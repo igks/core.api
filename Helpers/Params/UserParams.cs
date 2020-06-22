@@ -2,6 +2,6 @@ namespace CORE.API.Helpers.Params
 {
     public class UserParams : BaseParams
     {
-        public string Fisrtname { get; set; }
+        public string Firstname { get; set; }
     }
 }

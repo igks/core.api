@@ -57,9 +57,9 @@ namespace CORE.API.Persistence.Repository
         {
             var users = context.User.AsQueryable();
 
-            if (!string.IsNullOrEmpty(userParams.Fisrtname))
+            if (!string.IsNullOrEmpty(userParams.Firstname))
             {
-                users = users.Where(u => u.Fisrtname.Contains(userParams.Fisrtname));
+                users = users.Where(u => u.Firstname.Contains(userParams.Firstname));
             }
 
             if (userParams.isDescending)
@@ -69,7 +69,7 @@ namespace CORE.API.Persistence.Repository
                     switch (userParams.OrderBy.ToLower())
                     {
                         case "firstname":
-                            users = users.OrderByDescending(u => u.Fisrtname);
+                            users = users.OrderByDescending(u => u.Firstname);
                             break;
                         default:
                             users = users.OrderByDescending(u => u.Id);
@@ -88,7 +88,7 @@ namespace CORE.API.Persistence.Repository
                     switch (userParams.OrderBy.ToLower())
                     {
                         case "firstname":
-                            users = users.OrderBy(u => u.Fisrtname);
+                            users = users.OrderBy(u => u.Firstname);
                             break;
                         default:
                             users = users.OrderBy(u => u.Id);

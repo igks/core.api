@@ -10,7 +10,7 @@ namespace CORE.API.Core.Models
         public int Id { get; set; }
 
         [Column(TypeName = "varchar(30)")]
-        public string Fisrtname { get; set; }
+        public string Firstname { get; set; }
 
         [Column(TypeName = "varchar(30)")]
         public string Lastname { get; set; }
