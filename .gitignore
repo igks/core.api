@@ -6,6 +6,7 @@
 Migrations/
 publish/
 Uploads/
+StaticFiles/
 
 ### Angular ###
 ## Angular ##

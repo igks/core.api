@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using AutoMapper;
 using CORE.API.Controllers.Dto;
@@ -7,7 +8,10 @@ using CORE.API.Core.IRepository;
 using CORE.API.Core.Models;
 using CORE.API.Helpers;
 using CORE.API.Helpers.Params;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting.Internal;
 
 namespace CORE.API.Controllers
 {
@@ -18,12 +22,14 @@ namespace CORE.API.Controllers
         private readonly IMapper mapper;
         private readonly IUserRepository userRepository;
         private IUnitOfWork unitOfWork;
+        private readonly IWebHostEnvironment hostingEnvironment;
 
-        public UserController(IMapper mapper, IUserRepository userRepository, IUnitOfWork unitOfWork)
+        public UserController(IMapper mapper, IUserRepository userRepository, IUnitOfWork unitOfWork, IWebHostEnvironment environment)
         {
             this.mapper = mapper;
             this.userRepository = userRepository;
             this.unitOfWork = unitOfWork;
+            this.hostingEnvironment = environment;
         }
 
         [HttpGet]
@@ -126,5 +132,60 @@ namespace CORE.API.Controllers
 
             return Ok(id);
         }
+
+        [HttpPut("photo/{id}")]
+        public async Task<IActionResult> Upload(int id, IFormFile file)
+        {
+            if (file != null)
+            {
+                var folderName = Path.Combine("StaticFiles", "Images");
+                var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), folderName);
+
+
+                // var folder = Path.Combine(hostingEnvironment.WebRootPath, "Profiles");
+                if (!Directory.Exists(pathToSave))
+                {
+                    Directory.CreateDirectory(pathToSave);
+                }
+                if (file.Length > 0)
+                {
+                    var user = await userRepository.GetById(id);
+
+                    var currenttime = DateTime.Now.ToString("dd-mm-yyyy-HH-mm-ss");
+                    var fileName = $"{user.Id}-{currenttime}-{file.FileName}";
+
+                    var fullPath = Path.Combine(pathToSave, fileName);
+                    var dbPath = Path.Combine(folderName, fileName);
+
+                    // var filePath = Path.Combine(folder, fileName);
+                    using (var fileStream = new FileStream(fullPath, FileMode.Create))
+                    {
+                        await file.CopyToAsync(fileStream);
+                    }
+
+                    user.Photo = dbPath;
+                    userRepository.Update(user);
+
+                    if (await unitOfWork.CompleteAsync() == false)
+                    {
+                        throw new Exception(message: "Update user failed in save");
+                    }
+
+                    user = await userRepository.GetById(user.Id);
+                    var result = mapper.Map<User, ViewUserDto>(user);
+                    return Ok(result);
+                }
+                else
+                {
+                    return Ok();
+                }
+            }
+            else
+            {
+                return Ok();
+            }
+
+        }
+
     }
 }
