@@ -20,6 +20,9 @@ namespace CORE.API.Helpers.Mapping
             CreateMap<AddUserDto, User>();
             CreateMap<EditUserDto, User>();
             CreateMap<RegisterDto, User>();
+
+            CreateMap<Employee, ViewEmployeeDto>();
+            CreateMap<SaveEmployeeDto, Employee>();
         }
     }
 }
