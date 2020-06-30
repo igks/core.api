@@ -16,5 +16,8 @@ namespace CORE.API.Core.Models
         [Required]
         [Column(TypeName = "varchar(100)")]
         public string Name { get; set; }
+        public int? ParentId { get; set; }
+        public int? ManagerId { get; set; }
+        public int? AssistantId { get; set; }
     }
 }

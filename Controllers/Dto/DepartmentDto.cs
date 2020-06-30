@@ -3,8 +3,11 @@ namespace CORE.API.Controllers.Dto
     public class SaveDepartmentDto
     {
 
-        public string Name { get; set; }
         public string Code { get; set; }
+        public string Name { get; set; }
+        public int? ParentId { get; set; }
+        public int? ManagerId { get; set; }
+        public int? AssistantId { get; set; }
         public bool isUpdate { get; set; } = false;
     }
 
@@ -15,5 +18,8 @@ namespace CORE.API.Controllers.Dto
         public string Code { get; set; }
 
         public string Name { get; set; }
+        public int? ParentId { get; set; }
+        public int? ManagerId { get; set; }
+        public int? AssistantId { get; set; }
     }
 }
