@@ -19,6 +19,7 @@ namespace CORE.API.Persistence.Repository
         {
             this.context = context;
         }
+
         public async Task<IEnumerable<Department>> GetAll()
         {
             var departments = await context.Department.ToListAsync();
@@ -95,6 +96,12 @@ namespace CORE.API.Persistence.Repository
               .CreateAsync(departments, departmentParams.PageNumber, departmentParams.PageSize);
         }
 
+        public async Task<IEnumerable<Department>> GetSub(int parentId)
+        {
+            var departments = await context.Department.Where(d => d.ParentId == parentId).ToListAsync();
+            return departments;
+        }
+
         public void Add(Department department)
         {
             context.Department.Add(department);
@@ -111,4 +118,4 @@ namespace CORE.API.Persistence.Repository
             context.Remove(department);
         }
     }
-}
+} 

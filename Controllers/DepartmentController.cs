@@ -66,6 +66,14 @@ namespace CORE.API.Controllers
             return Ok(result);
         }
 
+        [HttpGet("sub/{parentId}")]
+        public async Task<IActionResult> GetSub(int parentId)
+        {
+            var subDepartment = await departmentRepository.GetSub(parentId);
+            var result = mapper.Map<IEnumerable<Department>>(subDepartment);
+            return Ok(result); 
+        }
+
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] SaveDepartmentDto departmentDto)
         {

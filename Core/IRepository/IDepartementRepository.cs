@@ -12,6 +12,7 @@ namespace CORE.API.Core.IRepository
 
         Task<IEnumerable<Department>> GetAll();
         Task<Department> GetById(int id);
+        Task<IEnumerable<Department>> GetSub(int parentId);
         void Add(Department department);
         void Update(Department department);
         void Remove(Department department);
