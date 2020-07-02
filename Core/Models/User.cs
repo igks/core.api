@@ -25,7 +25,7 @@ namespace CORE.API.Core.Models
         public string Photo { get; set; }
 
         [Required]
-        [Column(TypeName = "varchar(20)")]
+        [Column(TypeName = "varchar(50)")]
         public string Email { get; set; }
 
         [Column(TypeName = "varchar(255)")]

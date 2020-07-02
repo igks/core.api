@@ -43,31 +43,36 @@ namespace CORE.API.Controllers
                 return Unauthorized();
             }
 
-            var userId = user.Id.ToString();
+            var result = JWTTokenHandler(user);
+            return Ok(result);
+        }
 
-            var claims = new List<Claim>();
-            claims.Add(new Claim("Id", userId));
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8
-                    .GetBytes(this.config.GetSection("AppSettings:Token").Value));
-
-            var credential = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
-
-            var tokenDescriptor = new SecurityTokenDescriptor
+        [HttpPost("social-login")]
+        public async Task<IActionResult> SocialLogin([FromBody] SocialLoginDto userLogin)
+        {
+            var exUser = await userRepository.GetByEmail(userLogin.Email);
+            if (exUser == null)
             {
-                Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddHours(1),
-                SigningCredentials = credential
-            };
+                var user = new User()
+                {
+                    Email = userLogin.Email
+                };
+                var password = "defaultsecretkey";
+                userRepository.Add(user, password);
 
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            var userData = mapper.Map<ViewUserDto>(user);
-            return Ok(new
+                if (await unitOfWork.CompleteAsync() == false)
+                {
+                    throw new Exception(message: "Add new user failed on save");
+                }
+
+                var result = JWTTokenHandler(user);
+                return Ok(result);
+            }
+            else
             {
-                token = tokenHandler.WriteToken(token),
-                userData
-            });
+                var result = JWTTokenHandler(exUser);
+                return Ok(result);
+            }
         }
 
         [HttpPost("Register")]
@@ -90,6 +95,36 @@ namespace CORE.API.Controllers
             user = await userRepository.GetById(user.Id);
             var result = mapper.Map<User, ViewUserDto>(user);
             return Ok(result);
+        }
+
+        private object JWTTokenHandler(User user)
+        {
+            var userId = user.Id.ToString();
+
+            var claims = new List<Claim>();
+            claims.Add(new Claim("Id", userId));
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8
+                    .GetBytes(this.config.GetSection("AppSettings:Token").Value));
+
+            var credential = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(claims),
+                Expires = DateTime.Now.AddHours(1),
+                SigningCredentials = credential
+            };
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var userData = mapper.Map<ViewUserDto>(user);
+            return (
+            new
+            {
+                token = tokenHandler.WriteToken(token),
+                userData
+            });
         }
     }
 }

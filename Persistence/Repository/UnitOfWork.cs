@@ -1,5 +1,7 @@
+using System;
 using System.Threading.Tasks;
 using CORE.API.Core.IRepository;
+using Microsoft.EntityFrameworkCore;
 
 namespace CORE.API.Persistence.Repository
 {
@@ -19,8 +21,9 @@ namespace CORE.API.Persistence.Repository
             {
                 saveResult = await context.SaveChangesAsync();
             }
-            catch
+            catch (DbUpdateException ex)
             {
+                // Console.WriteLine(ex);
                 saveResult = 0;
             }
             return saveResult > 0;

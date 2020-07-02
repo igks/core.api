@@ -11,4 +11,9 @@ namespace CORE.API.Controllers.Dto
         public string Email { get; set; }
         public string Password { get; set; }
     }
+
+    public class SocialLoginDto
+    {
+        public string Email { get; set; }
+    }
 }

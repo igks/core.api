@@ -53,6 +53,12 @@ namespace CORE.API.Persistence.Repository
             return await context.User.FindAsync(id);
         }
 
+        public async Task<User> GetByEmail(string email)
+        {
+            var user = await context.User.FirstOrDefaultAsync(u => u.Email == email);
+            return user;
+        }
+
         public async Task<PagedList<User>> GetPaged(UserParams userParams)
         {
             var users = context.User.AsQueryable();
