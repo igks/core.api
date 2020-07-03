@@ -13,6 +13,7 @@ namespace CORE.API.Persistence
         public DbSet<FileList> FileList { get; set; }
         public DbSet<User> User { get; set; }
         public DbSet<Employee> Employee { get; set; }
+        public DbSet<ModuleRight> ModuleRight { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -23,6 +23,9 @@ namespace CORE.API.Helpers.Mapping
 
             CreateMap<Employee, ViewEmployeeDto>();
             CreateMap<SaveEmployeeDto, Employee>();
+
+            CreateMap<ModuleRight, ViewModuleDto>();
+            CreateMap<SaveModuleDto, ModuleRight>();
         }
     }
 }

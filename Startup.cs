@@ -48,6 +48,7 @@ namespace CORE.API
             services.AddScoped<IDepartmentRepository, DepartmentRepository>();
             services.AddScoped<IFileListRepository, FileListRepository>();
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+            services.AddScoped<IModuleRightRepository, ModuleRightRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
