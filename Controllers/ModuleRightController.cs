@@ -5,6 +5,8 @@ using AutoMapper;
 using CORE.API.Controllers.Dto;
 using CORE.API.Core.IRepository;
 using CORE.API.Core.Models;
+using CORE.API.Helpers;
+using CORE.API.Helpers.Params;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CORE.API.Controllers
@@ -43,6 +45,18 @@ namespace CORE.API.Controllers
             }
 
             var result = mapper.Map<ModuleRight, ViewModuleDto>(module);
+
+            return Ok(result);
+        }
+
+        [HttpGet("paged")]
+        public async Task<IActionResult> GetPaged([FromQuery] ModuleRightParams moduleParams)
+        {
+            var modules = await moduleRepository.GetPaged(moduleParams);
+
+            var result = mapper.Map<IEnumerable<ViewModuleDto>>(modules);
+
+            Response.AddPagination(modules.CurrentPage, modules.PageSize, modules.TotalCount, modules.TotalPages);
 
             return Ok(result);
         }
