@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using CORE.API.Core.IRepository;
 using CORE.API.Core.Models;
@@ -44,51 +46,13 @@ namespace CORE.API.Persistence.Repository
                 employees = employees.Where(e => e.Lastname.Contains(employeeParams.Lastname));
             }
 
-            // sorting
-            if (employeeParams.isDescending)
+            var columnsMap = new Dictionary<string, Expression<Func<Employee, object>>>()
             {
-                if (!string.IsNullOrEmpty(employeeParams.OrderBy))
-                {
-                    switch (employeeParams.OrderBy.ToLower())
-                    {
-                        case "firstname":
-                            employees = employees.OrderByDescending(e => e.Firstname);
-                            break;
-                        case "lastname":
-                            employees = employees.OrderByDescending(e => e.Lastname);
-                            break;
-                        default:
-                            employees = employees.OrderByDescending(e => e.Firstname);
-                            break;
-                    }
-                }
-                else
-                {
-                    employees = employees.OrderByDescending(e => e.Firstname);
-                }
-            }
-            else
-            {
-                if (!string.IsNullOrEmpty(employeeParams.OrderBy))
-                {
-                    switch (employeeParams.OrderBy.ToLower())
-                    {
-                        case "firstname":
-                            employees = employees.OrderBy(e => e.Firstname);
-                            break;
-                        case "lastname":
-                            employees = employees.OrderBy(e => e.Lastname);
-                            break;
-                        default:
-                            employees = employees.OrderBy(e => e.Firstname);
-                            break;
-                    }
-                }
-                else
-                {
-                    employees = employees.OrderBy(e => e.Firstname);
-                }
-            }
+                ["firstname"] = e => e.Firstname,
+                ["lastname"] = e => e.Lastname
+            };
+
+            employees = employees.ApplyOrdering(employeeParams, columnsMap);
 
             return await PagedList<Employee>
               .CreateAsync(employees, employeeParams.PageNumber, employeeParams.PageSize);

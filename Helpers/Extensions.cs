@@ -1,3 +1,8 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using CORE.API.Helpers.Params;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -22,6 +27,21 @@ namespace CORE.API.Helpers
             response.Headers.Add("Pagination",
                 JsonConvert.SerializeObject(paginationHeader, camelCaseFormatter));
             response.Headers.Add("Access-Control-Expose-Headers", "Pagination");
+        }
+
+        public static IQueryable<T> ApplyOrdering<T>(this IQueryable<T> query, BaseParams baseParams, Dictionary<string, Expression<Func<T, object>>> columnsMap)
+        {
+            if (String.IsNullOrWhiteSpace(baseParams.OrderBy) || !columnsMap.ContainsKey(baseParams.OrderBy))
+                return query;
+
+            if (baseParams.isDescending)
+            {
+                return query.OrderByDescending(columnsMap[baseParams.OrderBy]);
+            }
+            else
+            {
+                return query.OrderBy(columnsMap[baseParams.OrderBy]);
+            }
         }
     }
 }

@@ -46,51 +46,13 @@ namespace CORE.API.Persistence.Repository
                 departments = departments.Where(d => d.Code.Contains(departmentParams.Code));
             }
 
-            // sorting
-            if (departmentParams.isDescending)
+            var columnsMap = new Dictionary<string, Expression<Func<Department, object>>>()
             {
-                if (!string.IsNullOrEmpty(departmentParams.OrderBy))
-                {
-                    switch (departmentParams.OrderBy.ToLower())
-                    {
-                        case "code":
-                            departments = departments.OrderByDescending(d => d.Code);
-                            break;
-                        case "name":
-                            departments = departments.OrderByDescending(d => d.Name);
-                            break;
-                        default:
-                            departments = departments.OrderByDescending(d => d.Code);
-                            break;
-                    }
-                }
-                else
-                {
-                    departments = departments.OrderByDescending(d => d.Code);
-                }
-            }
-            else
-            {
-                if (!string.IsNullOrEmpty(departmentParams.OrderBy))
-                {
-                    switch (departmentParams.OrderBy.ToLower())
-                    {
-                        case "code":
-                            departments = departments.OrderBy(d => d.Code);
-                            break;
-                        case "name":
-                            departments = departments.OrderBy(d => d.Name);
-                            break;
-                        default:
-                            departments = departments.OrderBy(d => d.Code);
-                            break;
-                    }
-                }
-                else
-                {
-                    departments = departments.OrderBy(d => d.Code);
-                }
-            }
+                ["code"] = d => d.Code,
+                ["name"] = d => d.Name
+            };
+
+            departments = departments.ApplyOrdering(departmentParams, columnsMap);
 
             return await PagedList<Department>
               .CreateAsync(departments, departmentParams.PageNumber, departmentParams.PageSize);

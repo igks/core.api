@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using CORE.API.Core.IRepository;
 using CORE.API.Core.Models;
@@ -68,44 +70,12 @@ namespace CORE.API.Persistence.Repository
                 users = users.Where(u => u.Firstname.Contains(userParams.Firstname));
             }
 
-            if (userParams.isDescending)
+            var columnsMap = new Dictionary<string, Expression<Func<User, object>>>()
             {
-                if (!string.IsNullOrEmpty(userParams.OrderBy))
-                {
-                    switch (userParams.OrderBy.ToLower())
-                    {
-                        case "firstname":
-                            users = users.OrderByDescending(u => u.Firstname);
-                            break;
-                        default:
-                            users = users.OrderByDescending(u => u.Id);
-                            break;
-                    }
-                }
-                else
-                {
-                    users = users.OrderByDescending(u => u.Id);
-                }
-            }
-            else
-            {
-                if (!string.IsNullOrEmpty(userParams.OrderBy))
-                {
-                    switch (userParams.OrderBy.ToLower())
-                    {
-                        case "firstname":
-                            users = users.OrderBy(u => u.Firstname);
-                            break;
-                        default:
-                            users = users.OrderBy(u => u.Id);
-                            break;
-                    }
-                }
-                else
-                {
-                    users = users.OrderBy(u => u.Id);
-                }
-            }
+                ["name"] = u => u.Firstname
+            };
+
+            users = users.ApplyOrdering(userParams, columnsMap);
 
             return await PagedList<User>
                 .CreateAsync(users, userParams.PageNumber, userParams.PageSize);
