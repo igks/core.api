@@ -18,6 +18,9 @@ namespace CORE.API.Core.Models
         public string Name { get; set; }
 
         [Column(TypeName = "varchar(225)")]
-        public string ModulesId { get; set; }
+        public string ModulesReadId { get; set; }
+
+        [Column(TypeName = "varchar(225)")]
+        public string ModulesWriteId { get; set; }
     }
 }

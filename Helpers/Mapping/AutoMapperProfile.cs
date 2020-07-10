@@ -31,10 +31,13 @@ namespace CORE.API.Helpers.Mapping
 
             // map with converting string to array
             CreateMap<RoleGroup, ViewRoleGroupDto>()
-                .ForMember(dest => dest.ModulesId, opt => opt.MapFrom(src => src.ModulesId.Replace(",", "").Select(item => Char.GetNumericValue(item))));
+                .ForMember(dest => dest.ModulesReadId, opt => opt.MapFrom(src => src.ModulesReadId.Split(",", StringSplitOptions.None).ToList()))
+                .ForMember(dest => dest.ModulesWriteId, opt => opt.MapFrom(src => src.ModulesWriteId.Split(",", StringSplitOptions.None).ToList()));
+
             // map with converting array to string
             CreateMap<SaveRoleGroupDto, RoleGroup>()
-                .ForMember(dest => dest.ModulesId, opt => opt.MapFrom(src => string.Join(",", src.ModulesId)));
+                .ForMember(dest => dest.ModulesReadId, opt => opt.MapFrom(src => string.Join(",", src.ModulesReadId)))
+                .ForMember(dest => dest.ModulesWriteId, opt => opt.MapFrom(src => string.Join(",", src.ModulesWriteId)));
         }
     }
 }

@@ -6,7 +6,8 @@ namespace CORE.API.Controllers.Dto
     {
         public string Code { get; set; }
         public string Name { get; set; }
-        public ICollection<int> ModulesId { get; set; }
+        public ICollection<int> ModulesReadId { get; set; }
+        public ICollection<int> ModulesWriteId { get; set; }
         public bool isUpdate { get; set; }
     }
 
@@ -15,6 +16,7 @@ namespace CORE.API.Controllers.Dto
         public int Id { get; set; }
         public string Code { get; set; }
         public string Name { get; set; }
-        public ICollection<int> ModulesId { get; set; }
+        public ICollection<int> ModulesReadId { get; set; }
+        public ICollection<int> ModulesWriteId { get; set; }
     }
 }
