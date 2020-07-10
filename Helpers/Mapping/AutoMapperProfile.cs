@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using AutoMapper;
@@ -26,6 +28,13 @@ namespace CORE.API.Helpers.Mapping
 
             CreateMap<ModuleRight, ViewModuleDto>();
             CreateMap<SaveModuleDto, ModuleRight>();
+
+            // map with converting string to array
+            CreateMap<RoleGroup, ViewRoleGroupDto>()
+                .ForMember(dest => dest.ModulesId, opt => opt.MapFrom(src => src.ModulesId.Replace(",", "").Select(item => Char.GetNumericValue(item))));
+            // map with converting array to string
+            CreateMap<SaveRoleGroupDto, RoleGroup>()
+                .ForMember(dest => dest.ModulesId, opt => opt.MapFrom(src => string.Join(",", src.ModulesId)));
         }
     }
 }

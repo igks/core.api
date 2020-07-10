@@ -15,6 +15,8 @@ namespace CORE.API.Persistence
         public DbSet<Employee> Employee { get; set; }
         public DbSet<ModuleRight> ModuleRight { get; set; }
 
+        public DbSet<RoleGroup> RoleGroup { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new DepartmentConfiguration());
